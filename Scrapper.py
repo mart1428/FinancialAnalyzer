@@ -11,6 +11,8 @@ class YFinanceScrapper():
         self.__bsheet_isEmpty = True
         self.__istatement_isEmpty = True
         self.__cflow_isEmpty = True
+        self.fiscalPeriod = {}
+
         if self.__ticker != None:
             self.__bsheet_url = "https://ca.finance.yahoo.com/quote/" + self.__ticker + '/balance-sheet?p=' + self.__ticker 
             self.__istatement_url = 'https://ca.finance.yahoo.com/quote/' + self.__ticker + '/financials?p=' + self.__ticker
@@ -40,6 +42,26 @@ class YFinanceScrapper():
             self.__istatement_url = 'https://ca.finance.yahoo.com/quote/' + self.__ticker + '/financials?p=' + self.__ticker
             self.__cflow_url = 'https://ca.finance.yahoo.com/quote/' + self.__ticker + '/cash-flow?p=' + self.__ticker
 
+    def scrapFiscalPeriod(self):
+        bsheet_pg = requests.get(self.__bsheet_url)
+        bsheet_soup = BeautifulSoup(bsheet_pg.content, 'html.parser')
+
+        istatement_pg = requests.get(self.__istatement_url)
+        istatement_soup = BeautifulSoup(istatement_pg.content, 'html.parser')
+
+        cflow_pg = requests.get(self.__cflow_url)
+        cflow_soup = BeautifulSoup(cflow_pg.content, 'html.parser')
+
+        bsheet_table = bsheet_soup.find_all("div", {"class" : "D(tbhg)"})
+        istatement_table = istatement_soup.find_all("div", {"class" : "D(tbhg)"})
+        cflow_table = cflow_soup.find_all('div', {'class' : 'D(tbhg)'})
+
+        self.fiscalPeriod["Balance Sheet"] = bsheet_table[0].get_text(separator = '|').split('|')[1:]
+        self.fiscalPeriod["Income Statement"] = istatement_table[0].get_text(separator = '|').split('|')[1:]
+        self.fiscalPeriod["Cash Flow Statement"] = cflow_table[0].get_text(separator = '|').split('|')[1:]
+
+        return self.fiscalPeriod
+
     def collect_data(self):
         try:
             self.scrapBSheet()
@@ -61,6 +83,11 @@ class YFinanceScrapper():
             self.__cflow_isEmpty = True
         else:
             self.__cflow_isEmpty = False
+
+        try:
+            self.scrapFiscalPeriod()
+        except:
+            print("ERROR: Fiscal period not found!")
 
     
     def scrapBSheet(self):
@@ -160,6 +187,9 @@ class YFinanceScrapper():
 
     def getCFlowData(self):
         return self.cflow_data
+
+    def getFiscalPeriod(self):
+        return self.fiscalPeriod
 
 #==========================================
 #---Test---
