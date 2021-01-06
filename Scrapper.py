@@ -5,19 +5,33 @@ import requests
 class YFinanceScrapper():
     def __init__(self, ticker = None):
         self.__ticker = ticker
-        self.data = {}
+        self.bsheet_data = {}
+        self.istatement_data = {}
+        self.cflow_data = {}
+        self.__bsheet_isEmpty = True
+        self.__istatement_isEmpty = True
+        self.__cflow_isEmpty = True
         if self.__ticker != None:
             self.__bsheet_url = "https://ca.finance.yahoo.com/quote/" + self.__ticker + '/balance-sheet?p=' + self.__ticker 
             self.__istatement_url = 'https://ca.finance.yahoo.com/quote/' + self.__ticker + '/financials?p=' + self.__ticker
             self.__cflow_url = 'https://ca.finance.yahoo.com/quote/' + self.__ticker + '/cash-flow?p=' + self.__ticker
 
     def __str__(self):
-        s = 'Ticker: ' + self.__ticker + '\n'
+        s = 'Ticker: ' + str(self.__ticker) + '\n' +\
+            'Balance Sheet Collected: ' + str(not self.__bsheet_isEmpty) + '\n' + \
+            'Income Statement Collected: ' + str(not self.__istatement_isEmpty) + '\n' +\
+            'Cash Flow Statement Collected: ' + str(not self.__cflow_isEmpty)
         return s
 
     def changeTicker(self, ticker):
         self.__ticker = ticker
         self.get_urls()
+        self.__bsheet_isEmpty = True
+        self.__istatement_isEmpty = True
+        self.__cflow_isEmpty = True
+        self.bsheet_data = {}
+        self.istatement_data = {}
+        self.cflow_data = {}
 
 
     def get_urls(self):
@@ -27,9 +41,26 @@ class YFinanceScrapper():
             self.__cflow_url = 'https://ca.finance.yahoo.com/quote/' + self.__ticker + '/cash-flow?p=' + self.__ticker
 
     def collect_data(self):
-        self.scrapBSheet()
-        self.scrapIStatement()
-        self.scrapCFlow()
+        try:
+            self.scrapBSheet()
+        except:
+            self.__bsheet_isEmpty = True
+        else:
+            self.__bsheet_isEmpty = False
+
+        try:
+            self.scrapIStatement()
+        except:
+            self.__istatement_isEmpty = True
+        else:
+            self.__istatement_isEmpty = False
+
+        try:
+            self.scrapCFlow()
+        except:
+            self.__cflow_isEmpty = True
+        else:
+            self.__cflow_isEmpty = False
 
     
     def scrapBSheet(self):
@@ -53,14 +84,14 @@ class YFinanceScrapper():
                 except:
                     continue
                 else:
-                    self.data[row.get_text(separator = '|').split('|')[0]] = []
+                    self.bsheet_data[row.get_text(separator = '|').split('|')[0]] = []
                     for i in row.get_text(separator = '|').split('|')[1:]:
                         dt = i.replace(',','')
                         
                         if(dt == '-'):
-                            self.data[row.get_text(separator = '|').split('|')[0]].append(0)
+                            self.bsheet_data[row.get_text(separator = '|').split('|')[0]].append(0)
                         else:
-                            self.data[row.get_text(separator = '|').split('|')[0]].append(int(dt))
+                            self.bsheet_data[row.get_text(separator = '|').split('|')[0]].append(int(dt))
 
     def scrapIStatement(self):
         try:
@@ -83,14 +114,14 @@ class YFinanceScrapper():
                 except:
                     continue
                 else:
-                    self.data[row.get_text(separator = '|').split('|')[0]] = []
+                    self.istatement_data[row.get_text(separator = '|').split('|')[0]] = []
                     for i in row.get_text(separator = '|').split('|')[1:]:
                         dt = i.replace(',','')
                         
                         if(dt == '-'):
-                            self.data[row.get_text(separator = '|').split('|')[0]].append(0)
+                            self.istatement_data[row.get_text(separator = '|').split('|')[0]].append(0)
                         else:
-                            self.data[row.get_text(separator = '|').split('|')[0]].append(int(dt))
+                            self.istatement_data[row.get_text(separator = '|').split('|')[0]].append(int(dt))
 
     def scrapCFlow(self):
         try:
@@ -112,14 +143,23 @@ class YFinanceScrapper():
                 except:
                     continue
                 else:
-                    self.data[row.get_text(separator = '|').split('|')[0]] = []
+                    self.cflow_data[row.get_text(separator = '|').split('|')[0]] = []
                     for i in row.get_text(separator = '|').split('|')[1:]:
                         dt = i.replace(',','')
                         
                         if(dt == '-'):
-                            self.data[row.get_text(separator = '|').split('|')[0]].append(0)
+                            self.cflow_data[row.get_text(separator = '|').split('|')[0]].append(0)
                         else:
-                            self.data[row.get_text(separator = '|').split('|')[0]].append(int(dt))
+                            self.cflow_data[row.get_text(separator = '|').split('|')[0]].append(int(dt))
+
+    def getBSheetData(self):
+        return self.bsheet_data
+
+    def getIStatementData(self):
+        return self.istatement_data
+
+    def getCFlowData(self):
+        return self.cflow_data
 
 #==========================================
 #---Test---
