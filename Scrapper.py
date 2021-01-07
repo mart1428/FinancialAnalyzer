@@ -26,6 +26,9 @@ class YFinanceScrapper():
         return s
 
     def changeTicker(self, ticker):
+        '''
+        Change the object ticker
+        '''
         self.__ticker = ticker
         self.get_urls()
         self.__bsheet_isEmpty = True
@@ -37,12 +40,19 @@ class YFinanceScrapper():
 
 
     def get_urls(self):
+        '''
+            Get the urls of the ticker
+        '''
         if self.__ticker != None:
             self.__bsheet_url = "https://ca.finance.yahoo.com/quote/" + self.__ticker + '/balance-sheet?p=' + self.__ticker 
             self.__istatement_url = 'https://ca.finance.yahoo.com/quote/' + self.__ticker + '/financials?p=' + self.__ticker
             self.__cflow_url = 'https://ca.finance.yahoo.com/quote/' + self.__ticker + '/cash-flow?p=' + self.__ticker
 
     def scrapFiscalPeriod(self):
+        '''
+        Record the fiscal period into a dictionary.
+        '''
+
         bsheet_pg = requests.get(self.__bsheet_url)
         bsheet_soup = BeautifulSoup(bsheet_pg.content, 'html.parser')
 
@@ -63,6 +73,9 @@ class YFinanceScrapper():
         return self.fiscalPeriod
 
     def collect_data(self):
+        '''
+        Collect the data for the ticker using the urls.
+        '''
         try:
             self.scrapBSheet()
         except:
@@ -91,6 +104,9 @@ class YFinanceScrapper():
 
     
     def scrapBSheet(self):
+        '''
+        Scrap the balance sheet on yFinance
+        '''
         try:
             pg = requests.get(self.__bsheet_url)
             soup = BeautifulSoup(pg.content, "html.parser")
@@ -121,6 +137,9 @@ class YFinanceScrapper():
                             self.bsheet_data[row.get_text(separator = '|').split('|')[0]].append(int(dt))
 
     def scrapIStatement(self):
+        '''
+        Scrap the Income Statement from yFinance webpage
+        '''
         try:
             pg = requests.get(self.__istatement_url)
             soup = BeautifulSoup(pg.content, "html.parser")
@@ -151,6 +170,9 @@ class YFinanceScrapper():
                             self.istatement_data[row.get_text(separator = '|').split('|')[0]].append(int(dt))
 
     def scrapCFlow(self):
+        '''
+        Scrap the Cash Flow Statement from yFinance
+        '''
         try:
             pg = requests.get(self.__cflow_url)
             soup = BeautifulSoup(pg.content, "html.parser")
