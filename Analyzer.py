@@ -9,6 +9,8 @@ class StockAnalyzer(YFinanceScrapper):
         self.ha_istatement = None
         self.ha_bsheet = None
 
+        self.l_analysis = None
+
     def __str__(self):
         return super().__str__()
 
@@ -212,7 +214,11 @@ class StockAnalyzer(YFinanceScrapper):
             counter += 1
             
         for k,v in self.bsheet_data.items():
-            ha_bsheet[k] = [v[target_year_id], v[base_year_id], round((v[target_year_id] - v[base_year_id]) / v[base_year_id] * 100, 2)]
+            try:
+                ha_bsheet[k] = [v[target_year_id], v[base_year_id], round((v[target_year_id] - v[base_year_id]) / v[base_year_id] * 100, 2)]
+            except:
+                ha_bsheet[k] = [v[target_year_id], v[base_year_id], '0']
+
 
         self.ha_istatement = ha_istatement
         self.ha_bsheet = ha_bsheet
@@ -253,8 +259,110 @@ class StockAnalyzer(YFinanceScrapper):
 
         print(line2)
 
+    def liquidity_analysis(self):
+        '''
+        Perform liquidity analysis.
+        Liquidity analysis consists of current ratio, acid test, cash ratio and net working capital.
+        The analysis will be performed on every existing fiscal report except trailing twelve months (ttm).
+        '''
 
-#==========================================
+        l_analysis = {}
+        length = len(self.fiscalPeriod['Balance Sheet'])
+
+        curr_ratio = []
+        for i in range(length):
+            curr_ratio.append(round(self.bsheet_data.get('Total Current Assets')[i] / self.bsheet_data.get('Total Current Liabilities')[i], 2))        
+
+        quick_ratio = []    #Acid test, Note: Short term investment is not added
+        for i in range(length):
+            quick_ratio.append(round( ((self.bsheet_data.get('Cash And Cash Equivalents')[i] + self.bsheet_data.get('Net Receivables')[i]) / self.bsheet_data.get('Total Current Liabilities')[i] ), 2))
+
+        cash_ratio = []
+        for i in range(length):
+            cash_ratio.append(round( (self.bsheet_data.get('Total Cash')[i] / self.bsheet_data.get('Total Current Liabilities')[i] ), 2))
+
+        working_capital = []
+        for i in range(length):
+            working_capital.append(round( (self.bsheet_data.get('Total Current Assets')[i] - self.bsheet_data.get('Total Current Liabilities')[i] ), 2))
+        
+        l_analysis['Current Ratio'] = curr_ratio
+        l_analysis['Quick Ratio'] = quick_ratio
+        l_analysis['Cash Ratio'] = cash_ratio
+        l_analysis['Working Capital'] = working_capital
+
+        self.l_analysis = l_analysis
+
+        return l_analysis
+
+    def print_l_analysis(self):
+        '''
+        Print liquidity analysis results on screen in tabular format.
+        '''
+
+        line1 = '-' * 100
+        line2 = '=' * 100
+
+        if self.l_analysis == None:
+            print("ERROR: liquidity analysis has not been executed!")
+            return -1
+        
+        bsheet_fmt = '{:<44} | '
+
+        length = len(self.fiscalPeriod['Balance Sheet'])
+        for i in range(length):
+            if i < length -1:
+                bsheet_fmt += "{:<10} | "
+            else:
+                bsheet_fmt += "{:<10}"
+
+        print(line2)
+        if length == 1:
+            print(bsheet_fmt.format('Liquidity Analysis', self.fiscalPeriod['Balance Sheet'][0]))
+            print(line1)
+
+            for k, v in self.l_analysis.items():
+                print(bsheet_fmt.format(k, str(v)))
+        
+        elif length == 2:
+            v1, v2 = self.fiscalPeriod['Balance Sheet']
+            print(bsheet_fmt.format('Liquidity Analysis', v1, v2))
+            print(line1)
+
+            for k, v in self.l_analysis.items():
+                v1, v2 = v
+                print(bsheet_fmt.format(k, str(v1), str(v2)))
+
+        elif length == 3:
+            v1, v2, v3 = self.fiscalPeriod['Balance Sheet']
+            print(bsheet_fmt.format('Liquidity Analysis', v1, v2, v3))
+            print(line1)
+
+            for k, v in self.l_analysis.items():
+                v1, v2, v3 = v
+                print(bsheet_fmt.format(k, str(v1), str(v2), str(v3)))
+
+        elif length == 4:
+            v1, v2, v3, v4 = self.fiscalPeriod['Balance Sheet']
+            print(bsheet_fmt.format('Liquidity Analysis', v1, v2, v3, v4))
+            print(line1)
+
+            for k, v in self.l_analysis.items():
+                v1, v2, v3, v4 = v
+                print(bsheet_fmt.format(k, str(v1), str(v2) , str(v3), str(v4)))
+
+        elif length == 5:
+            v1, v2, v3, v4, v5 = self.fiscalPeriod['Balance Sheet']
+            print(bsheet_fmt.format('Liquidity Analysis', v1, v2, v3, v4, v5))
+            print(line1)
+
+            for k, v in self.l_analysis.items():
+                v1, v2, v3, v4, v5 = v
+                print(bsheet_fmt.format(k, str(v1), str(v2), str(v3), str(v4), str(v5)))
+
+        print(line2 + '\n')
+
+
+#==========================================End of Code===================================
 #----Test----
 analyzer = StockAnalyzer()
 analyzer.changeTicker('TARO')
@@ -265,4 +373,6 @@ analyzer.vertical_analysis()
 # analyzer.print_istatement()
 # analyzer.print_cflow()
 analyzer.horizontal_analysis('2019', '2020')
-analyzer.print_ha()
+# analyzer.print_ha()
+analyzer.liquidity_analysis()
+analyzer.print_l_analysis()
