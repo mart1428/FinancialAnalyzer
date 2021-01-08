@@ -76,6 +76,7 @@ class YFinanceScrapper():
         '''
         Collect the data for the ticker using the urls.
         '''
+
         try:
             self.scrapBSheet()
         except:
@@ -201,6 +202,181 @@ class YFinanceScrapper():
                         else:
                             self.cflow_data[row.get_text(separator = '|').split('|')[0]].append(int(dt))
 
+
+    def print_bsheet(self):
+        line1 = '-' * 110
+        line2 = '=' * 110
+
+        bsheet_fmt = "{:<44} | "
+        length = len(self.fiscalPeriod['Balance Sheet'])
+        for i in range(length):
+            if i < length -1:
+                bsheet_fmt += "{:<10} | "
+            else:
+                bsheet_fmt += "{:<10}"
+
+        print(line2)
+        if length == 1:
+            print(bsheet_fmt.format('Balance Sheet', self.fiscalPeriod['Balance Sheet'][0]))
+            print(line1)
+
+            for k, v in self.bsheet_data.items():
+                print(bsheet_fmt.format(k, str(v)))
+        
+        elif length == 2:
+            v1, v2 = self.fiscalPeriod['Balance Sheet']
+            print(bsheet_fmt.format('Balance Sheet', v1, v2))
+            print(line1)
+
+            for k, v in self.bsheet_data.items():
+                v1, v2 = v
+                print(bsheet_fmt.format(k, str(v1), str(v2)))
+
+        elif length == 3:
+            v1, v2, v3 = self.fiscalPeriod['Balance Sheet']
+            print(bsheet_fmt.format('Balance Sheet', v1, v2, v3))
+            print(line1)
+
+            for k, v in self.bsheet_data.items():
+                v1, v2, v3 = v
+                print(bsheet_fmt.format(k, str(v1), str(v2), str(v3)))
+
+        elif length == 4:
+            v1, v2, v3, v4 = self.fiscalPeriod['Balance Sheet']
+            print(bsheet_fmt.format('Balance Sheet', v1, v2, v3, v4))
+            print(line1)
+
+            for k, v in self.bsheet_data.items():
+                v1, v2, v3, v4 = v
+                print(bsheet_fmt.format(k, str(v1), str(v2), str(v3), str(v4)))
+
+        elif length == 5:
+            v1, v2, v3, v4, v5 = self.fiscalPeriod['Balance Sheet']
+            print(bsheet_fmt.format('Balance Sheet', v1, v2, v3, v4, v5))
+            print(line1)
+
+            for k, v in self.bsheet_data.items():
+                v1, v2, v3, v4, v5 = v
+                print(bsheet_fmt.format(k, str(v1), str(v2), str(v3), str(v4), str(v5)))
+
+        print(line2 + '\n')
+
+    def print_istatement(self):
+        line1 = '-' * 110
+        line2 = '=' * 110
+
+        istatement_fmt = "{:<44} | "
+        length = len(self.fiscalPeriod['Income Statement'])
+        for i in range(length):
+            if i < length - 1:
+                istatement_fmt += "{:<10} | "
+            else:
+                istatement_fmt += "{:<10}"
+
+        print(line2)
+        if length == 1:
+            print(istatement_fmt.format('Income Statement', self.fiscalPeriod['Income Statement'][0]))
+            print(line1)
+
+            for k, v in self.istatement_data.items():
+                print(istatement_fmt.format(k, str(v)))
+        
+        elif length == 2:
+            v1, v2 = self.fiscalPeriod['Income Statement']
+            print(istatement_fmt.format('Income Statement', v1, v2))
+            print(line1)
+
+            for k, v in self.istatement_data.items():
+                v1, v2 = v
+                print(istatement_fmt.format(k, str(v1), str(v2)))
+
+        elif length == 3:
+            v1, v2, v3 = self.fiscalPeriod['Income Statement']
+            print(istatement_fmt.format('Income Statement', v1, v2, v3))
+            print(line1)
+
+            for k, v in self.istatement_data.items():
+                v1, v2, v3 = v
+                print(istatement_fmt.format(k, str(v1), str(v2), str(v3)))
+
+        elif length == 4:
+            v1, v2, v3, v4 = self.fiscalPeriod['Income Statement']
+            print(istatement_fmt.format('Income Statement', v1, v2, v3, v4))
+            print(line1)
+
+            for k, v in self.istatement_data.items():
+                v1, v2, v3, v4 = v
+                print(istatement_fmt.format(k, str(v1), str(v2), str(v3), str(v4)))
+
+        elif length == 5:
+            v1, v2, v3, v4, v5 = self.fiscalPeriod['Income Statement']
+            print(istatement_fmt.format('Income Statement', v1, v2, v3, v4, v5))
+            print(line1)
+
+            for k, v in self.istatement_data.items():
+                v1, v2, v3, v4, v5 = v
+                print(istatement_fmt.format(k, str(v1), str(v2), str(v3), str(v4), str(v5)))
+
+        print(line2 + '\n')
+
+    def print_cflow(self):
+        line1 = '-' * 110
+        line2 = '=' * 110
+
+        cflow_fmt = "{:<44} | "
+        length = len(self.fiscalPeriod['Cash Flow Statement'])
+        for i in range(length):
+            if i < length - 1:
+                cflow_fmt += "{:<10} | "
+            else:
+                cflow_fmt += "{:<10}"
+
+        print(line2)
+        if length == 1:
+            print(cflow_fmt.format('Cash Flow Statement', self.fiscalPeriod['Cash Flow Statement'][0]))
+            print(line1)
+
+            for k, v in self.cflow_data.items():
+                print(cflow_fmt.format(k, str(v)))
+        
+        elif length == 2:
+            v1, v2 = self.fiscalPeriod['Cash Flow Statement']
+            print(cflow_fmt.format('Cash Flow Statement', v1, v2))
+            print(line1)
+
+            for k, v in self.cflow_data.items():
+                v1, v2 = v
+                print(cflow_data.format(k, str(v1), str(v2)))
+
+        elif length == 3:
+            v1, v2, v3 = self.fiscalPeriod['Cash Flow Statement']
+            print(cflow_fmt.format('Cash Flow Statement', v1, v2, v3))
+            print(line1)
+
+            for k, v in self.cflow_data.items():
+                v1, v2, v3 = v
+                print(cflow_fmt.format(k, str(v1), str(v2), str(v3)))
+
+        elif length == 4:
+            v1, v2, v3, v4 = self.fiscalPeriod['Cash Flow Statement']
+            print(cflow_fmt.format('Cash Flow Statement', v1, v2, v3, v4))
+            print(line1)
+
+            for k, v in self.cflow_data.items():
+                v1, v2, v3, v4 = v
+                print(cflow_fmt.format(k, str(v1), str(v2), str(v3), str(v4)))
+
+        elif length == 5:
+            v1, v2, v3, v4, v5 = self.fiscalPeriod['Cash Flow Statement']
+            print(cflow_fmt.format('Cash Flow Statement', v1, v2, v3, v4, v5))
+            print(line1)
+
+            for k, v in self.cflow_data.items():
+                v1, v2, v3, v4, v5 = v
+                print(cflow_fmt.format(k, str(v1), str(v2), str(v3), str(v4), str(v5)))
+
+        print(line2 + '\n')
+
     def getBSheetData(self):
         return self.bsheet_data
 
@@ -213,13 +389,4 @@ class YFinanceScrapper():
     def getFiscalPeriod(self):
         return self.fiscalPeriod
 
-#==========================================
-#---Test---
-# yFinanceScrapper = YFinanceScrapper('TARO')
-
-# yFinanceScrapper.collect_data()
-# print(yFinanceScrapper.data)
-
-# yFinanceScrapper.changeTicker('TSLA')
-# yFinanceScrapper.collect_data()
-# print(yFinanceScrapper.data)
+#========================================== End of Code ===========================================
