@@ -6,6 +6,9 @@ class StockAnalyzer(YFinanceScrapper):
         self.va_istatement = None
         self.va_bsheet = None
 
+        self.ha_istatement = None
+        self.ha_bsheet = None
+
     def __str__(self):
         return super().__str__()
 
@@ -46,15 +49,21 @@ class StockAnalyzer(YFinanceScrapper):
         self.va_istatement = va_istatement
         self.va_bsheet = va_bsheet
 
+        return va_istatement, va_bsheet
+
     def print_va(self):
         '''
             Print vertical_analysis() result on screen.
         '''
 
+        if(self.va_istatement == None or self.va_bsheet == None):
+            print('ERROR: object.vertical_analysis() has not been executed!')
+            return -1
+
         line1 = '-' * 110
         line2 = '=' * 110
 
-        bsheet_fmt = "{:<43} | "
+        bsheet_fmt = "{:<44} | "
         length = len(self.fiscalPeriod['Balance Sheet'])
         for i in range(length):
             if i < length -1:
@@ -109,7 +118,7 @@ class StockAnalyzer(YFinanceScrapper):
         print(line2 + '\n')
 
 
-        istatement_fmt = "{:<43} | "
+        istatement_fmt = "{:<44} | "
         length = len(self.fiscalPeriod['Income Statement'])
         for i in range(length):
             if i < length - 1:
@@ -163,17 +172,97 @@ class StockAnalyzer(YFinanceScrapper):
 
         print(line2 + '\n')
             
-                
+    def horizontal_analysis(self, base_year = None, target_year = None):
+        '''
+            Do horizontal analysis on selected years.
+            Year format = YYYY. Example: 2020
+            Note: -horizontal analysis is not done on Cash Flow Statement
+                  -ttm is not included
+                  -this is yearly based analysis
+        '''
+        ha_istatement = {}
+        ha_bsheet = {}
+
+        if base_year == None:
+            base_year = input("Enter base year: ")
+
+        if target_year == None:
+            target_year = input("Enter target (current) year: ")
+
+        base_year_id = -1
+        target_year_id = -1
+
+        counter = 0
+        for i in self.fiscalPeriod['Income Statement'][1:]:
+            if i[:4] == base_year:
+                base_year_id = counter
+            elif i[:4] == target_year:
+                target_year_id = counter
+            counter += 1
+            
+        for k,v in self.istatement_data.items():
+            ha_istatement[k] = [v[target_year_id], v[base_year_id], round((v[target_year_id] - v[base_year_id]) / v[base_year_id] * 100, 2)]
+        
+        counter = 0
+        for i in self.fiscalPeriod['Balance Sheet']:
+            if i[:4] == base_year:
+                base_year_id = counter
+            elif i[:4] == target_year:
+                target_year_id = counter
+            counter += 1
+            
+        for k,v in self.bsheet_data.items():
+            ha_bsheet[k] = [v[target_year_id], v[base_year_id], round((v[target_year_id] - v[base_year_id]) / v[base_year_id] * 100, 2)]
+
+        self.ha_istatement = ha_istatement
+        self.ha_bsheet = ha_bsheet
+
+        return [ha_istatement, ha_bsheet]
+
+    def print_ha(self):
+        '''
+            print horizontal_analysis() result in tabular format
+        '''
+
+        line1 = '-' * 90
+        line2 = '=' * 90
+
+        if(self.ha_istatement == None or self.ha_bsheet == None):
+            print('ERROR: object.horizontal_analysis has not been executed!')
+            return -1
+
+        tab_fmt = '{:<44} | {:<19} | {:<10} | {:<10}'
+
+        print(line2)
+        print(tab_fmt.format('Income Statement', 'Target/Current Year', 'Base Year', 'Change %'))
+        print(line1)
+
+        for k,v in self.ha_istatement.items():
+            v1, v2, v3 = v
+            print(tab_fmt.format(k, str(v1), str(v2), str(v3) + '%'))
+
+        print(line2 + '\n')
+
+        print(line2)
+        print(tab_fmt.format('Balance Sheet', 'Target/Current Year', 'Base Year', 'Change %'))
+        print(line1)
+
+        for k,v in self.ha_bsheet.items():
+            v1, v2, v3 = v
+            print(tab_fmt.format(k, str(v1), str(v2), str(v3) + '%'))
+
+        print(line2)
 
 
 #==========================================
+#----Test----
 analyzer = StockAnalyzer()
-# print(analyzer)
 analyzer.changeTicker('TARO')
 analyzer.collect_data()
-# print(analyzer)
-# print(analyzer.getBSheetData())
-analyzer.scrapFiscalPeriod()
-# print(analyzer.getFiscalPeriod())
 analyzer.vertical_analysis()
-analyzer.print_va()
+# analyzer.print_va()
+# analyzer.print_bsheet()
+# analyzer.print_istatement()
+# analyzer.print_cflow()
+analyzer.horizontal_analysis('2019', '2020')
+analyzer.print_ha()
