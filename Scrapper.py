@@ -346,7 +346,7 @@ class YFinanceScrapper():
 
             for k, v in self.cflow_data.items():
                 v1, v2 = v
-                print(cflow_data.format(k, str(v1), str(v2)))
+                print(cflow_fmt.format(k, str(v1), str(v2)))
 
         elif length == 3:
             v1, v2, v3 = self.fiscalPeriod['Cash Flow Statement']
