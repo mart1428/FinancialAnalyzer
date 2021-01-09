@@ -1,4 +1,3 @@
-#Derived from borisng0112ca/StockScreeningScript/webscraping.py
 from bs4 import BeautifulSoup
 import requests
 
@@ -37,6 +36,7 @@ class YFinanceScrapper():
         self.bsheet_data = {}
         self.istatement_data = {}
         self.cflow_data = {}
+        self.collect_data()
 
 
     def get_urls(self):
