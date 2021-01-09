@@ -361,18 +361,4 @@ class StockAnalyzer(YFinanceScrapper):
 
         print(line2 + '\n')
 
-
 #==========================================End of Code===================================
-#----Test----
-analyzer = StockAnalyzer()
-analyzer.changeTicker('TARO')
-analyzer.collect_data()
-analyzer.vertical_analysis()
-# analyzer.print_va()
-# analyzer.print_bsheet()
-# analyzer.print_istatement()
-# analyzer.print_cflow()
-analyzer.horizontal_analysis('2019', '2020')
-# analyzer.print_ha()
-analyzer.liquidity_analysis()
-analyzer.print_l_analysis()
