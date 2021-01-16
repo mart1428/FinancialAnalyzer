@@ -11,6 +11,8 @@ class StockAnalyzer(YFinanceScrapper):
 
         self.l_analysis = None
 
+        self.e_analysis = None
+
     def __str__(self):
         return super().__str__()
 
@@ -117,6 +119,9 @@ class StockAnalyzer(YFinanceScrapper):
                 v1, v2, v3, v4, v5 = v
                 print(bsheet_fmt.format(k, str(v1) + '%', str(v2) + '%', str(v3) + '%', str(v4) + '%', str(v5) + '%'))
 
+        else:
+            print("ERROR")
+
         print(line2 + '\n')
 
 
@@ -171,6 +176,9 @@ class StockAnalyzer(YFinanceScrapper):
             for k, v in self.va_istatement.items():
                 v1, v2, v3, v4, v5 = v
                 print(istatement_fmt.format(k, str(v1) + '%', str(v2) + '%', str(v3) + '%', str(v4) + '%', str(v5) + '%'))
+
+        else:
+            print("ERROR:")
 
         print(line2 + '\n')
             
@@ -358,7 +366,69 @@ class StockAnalyzer(YFinanceScrapper):
             for k, v in self.l_analysis.items():
                 v1, v2, v3, v4, v5 = v
                 print(bsheet_fmt.format(k, str(v1), str(v2), str(v3), str(v4), str(v5)))
+            
+        else:
+            print("ERROR:")
 
         print(line2 + '\n')
 
+    def efficiency_analysis(self):
+        '''
+        Perform efficiency analysis to the company latest fiscal period. 
+        Inventory turnover ratio is only performed if the company has inventory.
+        '''
+        
+        e_analysis = {}
+
+        length = len(self.fiscalPeriod['Balance Sheet'])
+
+        if length <= 1:
+            print("ERROR: Not enough data!")
+        
+        else:
+            a_turnover = round(self.istatement_data['Total Revenue'][1] * 2/ (self.bsheet_data['Total Assets'][0] + self.bsheet_data['Total Assets'][1]), 2)
+
+        e_analysis['Asset Turnover Ratio'] = a_turnover
+
+        inventory = self.bsheet_data.get('Inventory', 'None')
+
+        if inventory != 'None':
+            i_turnover = round( self.istatement_data['Total Revenue'][1] * 2/ (self.bsheet_data['Inventory'][0] + self.bsheet_data['Inventory'][1]), 2)
+            e_analysis['Inventory Turnover Ratio'] = i_turnover
+
+        self.e_analysis = e_analysis
+
+        return e_analysis
+
+    def print_e_analysis(self):
+        '''
+        Print efficiency analysis result in tabular format
+        '''
+
+        line1 = '-' * 60
+        line2 = '=' * 60
+
+        if self.e_analysis == None:
+            print("ERROR: Efficiency analysis has not been executed!")
+            return -1
+        
+        bsheet_fmt = '{:<44} | {:<10}'
+        
+        print(line2)
+        print(bsheet_fmt.format('Efficiency Analysis', self.fiscalPeriod['Balance Sheet'][0]))
+        print(line1)
+        for k,v in self.e_analysis.items():
+            print(bsheet_fmt.format(k, v))
+
+        print(line2 + '\n')
+
+        
+
+    
+
 #==========================================End of Code===================================
+
+analyzer = StockAnalyzer()
+analyzer.changeTicker('TARO')
+analyzer.efficiency_analysis()
+analyzer.print_e_analysis()
