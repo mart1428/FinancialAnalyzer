@@ -46,6 +46,13 @@ def main():
                     if choice.lower() == 'y':
                         analyzer.print_l_analysis()
 
+                elif choice.lower() == 'e':
+                    analyzer.efficiency_analysis()
+                    choice = str(input("Print result [y/n]? "))
+
+                    if choice.lower() == 'y':
+                        analyzer.print_e_analysis()
+
                 elif choice.lower() == 'q':
                     break
 
@@ -61,7 +68,7 @@ def menu(choice):
         s = '''
              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
             |    G - Get financial data                                               |
-            |    A - Perform an analysis // go to sub function                        |
+            |    A - Perform an analysis                                              |
             |    Q - Quit program                                                     |
              - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
             '''
@@ -72,6 +79,7 @@ def menu(choice):
             |    V - Perform vertical analysis                      |
             |    H - Perform horizontal analysis                    |
             |    L - Perform liquidity analysis                     |
+            |    E - Perform efficiency analysis                    |
             |    Q - Exit to previous section                       |
              - - - - - - - - - - - - - - - - - - - - - - - - - - - -
             '''
