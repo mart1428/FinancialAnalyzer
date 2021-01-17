@@ -53,6 +53,13 @@ def main():
                     if choice.lower() == 'y':
                         analyzer.print_e_analysis()
 
+                elif choice.lower() == 'r':
+                    analyzer.rate_of_return()
+                    choice = str(input("Print result [y/n]? "))
+
+                    if choice.lower() == 'y':
+                        analyzer.print_ror()
+
                 elif choice.lower() == 'q':
                     break
 
@@ -80,6 +87,7 @@ def menu(choice):
             |    H - Perform horizontal analysis                    |
             |    L - Perform liquidity analysis                     |
             |    E - Perform efficiency analysis                    |
+            |    R - Get Rates of return
             |    Q - Exit to previous section                       |
              - - - - - - - - - - - - - - - - - - - - - - - - - - - -
             '''
