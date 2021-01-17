@@ -211,9 +211,9 @@ class YFinanceScrapper():
         length = len(self.fiscalPeriod['Balance Sheet'])
         for i in range(length):
             if i < length -1:
-                bsheet_fmt += "{:<10} | "
+                bsheet_fmt += "{:>10} | "
             else:
-                bsheet_fmt += "{:<10}"
+                bsheet_fmt += "{:>10}"
 
         print(line2)
         if length == 1:
@@ -269,9 +269,9 @@ class YFinanceScrapper():
         length = len(self.fiscalPeriod['Income Statement'])
         for i in range(length):
             if i < length - 1:
-                istatement_fmt += "{:<10} | "
+                istatement_fmt += "{:>10} | "
             else:
-                istatement_fmt += "{:<10}"
+                istatement_fmt += "{:>10}"
 
         print(line2)
         if length == 1:
@@ -327,9 +327,9 @@ class YFinanceScrapper():
         length = len(self.fiscalPeriod['Cash Flow Statement'])
         for i in range(length):
             if i < length - 1:
-                cflow_fmt += "{:<10} | "
+                cflow_fmt += "{:>10} | "
             else:
-                cflow_fmt += "{:<10}"
+                cflow_fmt += "{:>10}"
 
         print(line2)
         if length == 1:
@@ -390,3 +390,6 @@ class YFinanceScrapper():
         return self.fiscalPeriod
 
 #========================================== End of Code ===========================================
+
+#Note
+#https://query1.finance.yahoo.com/v7/finance/download/TSLA?period1=12...00&period2=1610755200&interval=1d&events=history&includeAdjustedClose=true
