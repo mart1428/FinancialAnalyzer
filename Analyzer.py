@@ -13,6 +13,8 @@ class StockAnalyzer(YFinanceScrapper):
 
         self.e_analysis = None
 
+        self.ror = None
+
     def __str__(self):
         return super().__str__()
 
@@ -422,13 +424,46 @@ class StockAnalyzer(YFinanceScrapper):
 
         print(line2 + '\n')
 
-        
+    def rate_of_return(self):
+        '''
+        Calculate the rates of return using the last fiscal year report.
+        rates of return: - return on equity (roe)
+                         - return on assets (roa)
+        '''
 
+        ror = {}
+
+        roe = round(self.istatement_data['Net Income'][1] / self.bsheet_data['Total stockholders\' equity'][0], 2)
+        roa = round(self.istatement_data['Net Income'][1] * 2 / (self.bsheet_data['Total Assets'][0] + self.bsheet_data['Total Assets'][1]), 2)
+
+        ror['Return on Equity'] = roe
+        ror['Return on Assets'] = roa
+
+        self.ror = ror
+
+        return ror
+
+    def print_ror(self):
+        '''
+        Print rates of return in tabular format
+        '''
+
+        line1 = '-' * 60
+        line2 = '=' * 60
+
+        if self.ror == None:
+            print("ERROR: Rate of return has not been executed!")
+            return -1
+        
+        bsheet_fmt = '{:<44} | {:>10}'
+        
+        print(line2)
+        print(bsheet_fmt.format('Rates of Return', self.fiscalPeriod['Balance Sheet'][0]))
+        print(line1)
+        for k,v in self.ror.items():
+            print(bsheet_fmt.format(k, v))
+
+        print(line2 + '\n')
     
 
 #==========================================End of Code===================================
-
-# analyzer = StockAnalyzer()
-# analyzer.changeTicker('TARO')
-# analyzer.efficiency_analysis()
-# analyzer.print_e_analysis()
