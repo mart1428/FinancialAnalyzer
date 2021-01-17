@@ -71,9 +71,9 @@ class StockAnalyzer(YFinanceScrapper):
         length = len(self.fiscalPeriod['Balance Sheet'])
         for i in range(length):
             if i < length -1:
-                bsheet_fmt += "{:<10} | "
+                bsheet_fmt += "{:>10} | "
             else:
-                bsheet_fmt += "{:<10}"
+                bsheet_fmt += "{:>10}"
 
         print(line2)
         if length == 1:
@@ -129,9 +129,9 @@ class StockAnalyzer(YFinanceScrapper):
         length = len(self.fiscalPeriod['Income Statement'])
         for i in range(length):
             if i < length - 1:
-                istatement_fmt += "{:<10} | "
+                istatement_fmt += "{:>10} | "
             else:
-                istatement_fmt += "{:<10}"
+                istatement_fmt += "{:>10}"
 
         print(line2)
         if length == 1:
@@ -238,14 +238,14 @@ class StockAnalyzer(YFinanceScrapper):
             print horizontal_analysis() result in tabular format
         '''
 
-        line1 = '-' * 90
-        line2 = '=' * 90
+        line1 = '-' * 92
+        line2 = '=' * 92
 
         if(self.ha_istatement == None or self.ha_bsheet == None):
             print('ERROR: object.horizontal_analysis has not been executed!')
             return -1
 
-        tab_fmt = '{:<44} | {:<19} | {:<10} | {:<10}'
+        tab_fmt = '{:<44} | {:>19} | {:>10} | {:>10}'
 
         print(line2)
         print(tab_fmt.format('Income Statement', 'Target/Current Year', 'Base Year', 'Change %'))
@@ -319,9 +319,9 @@ class StockAnalyzer(YFinanceScrapper):
         length = len(self.fiscalPeriod['Balance Sheet'])
         for i in range(length):
             if i < length -1:
-                bsheet_fmt += "{:<10} | "
+                bsheet_fmt += "{:>10} | "
             else:
-                bsheet_fmt += "{:<10}"
+                bsheet_fmt += "{:>10}"
 
         print(line2)
         if length == 1:
@@ -412,7 +412,7 @@ class StockAnalyzer(YFinanceScrapper):
             print("ERROR: Efficiency analysis has not been executed!")
             return -1
         
-        bsheet_fmt = '{:<44} | {:<10}'
+        bsheet_fmt = '{:<44} | {:>10}'
         
         print(line2)
         print(bsheet_fmt.format('Efficiency Analysis', self.fiscalPeriod['Balance Sheet'][0]))
@@ -428,7 +428,7 @@ class StockAnalyzer(YFinanceScrapper):
 
 #==========================================End of Code===================================
 
-analyzer = StockAnalyzer()
-analyzer.changeTicker('TARO')
-analyzer.efficiency_analysis()
-analyzer.print_e_analysis()
+# analyzer = StockAnalyzer()
+# analyzer.changeTicker('TARO')
+# analyzer.efficiency_analysis()
+# analyzer.print_e_analysis()
